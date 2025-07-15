@@ -1,4 +1,4 @@
-// Initialize Firebase (Compat SDK)
+// Firebase 
 const firebaseConfig = {
   apiKey: "AIzaSyBypIWILBbuDB8_RVo7bmePtlHVdiMI364",
   authDomain: "project-et-f3433.firebaseapp.com",
@@ -23,7 +23,6 @@ let currentUser = null;
 
 function getTransactions() {
   if (currentUser) {
-    // Firestore fetch will be async, handled elsewhere
     return [];
   }
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -31,14 +30,13 @@ function getTransactions() {
 
 function saveTransactions(transactions) {
   if (currentUser) {
-    // Firestore save will be async, handled elsewhere
     return;
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 }
 
 function showError(message) {
-  alert(message); // You can replace this with a nicer UI if desired
+  alert(message); 
 }
 
 async function loadTransactionsFromFirestore() {
@@ -51,7 +49,7 @@ async function loadTransactionsFromFirestore() {
   } catch (err) {
     console.error("Error loading transactions from Firestore:", err);
     showError("Failed to load transactions from the cloud. Please try again later.");
-    renderTransactions(); // fallback to local
+    renderTransactions(); 
   }
 }
 
@@ -80,6 +78,7 @@ function renderTransactions(transactions) {
   let total = 0;
   let totalGain = 0;
   let totalLoss = 0;
+
   // Reverse transactions so latest is at the bottom
   transactions = transactions.slice().reverse();
   transactions.forEach((tx, idx) => {
@@ -104,7 +103,7 @@ function renderTransactions(transactions) {
       total -= parseFloat(tx.amount);
     }
   });
-  // Add event listeners for remove buttons
+
   document.querySelectorAll('.remove-tx-btn').forEach(btn => {
     btn.addEventListener('click', async function(e) {
       const idx = parseInt(this.getAttribute('data-idx'));
@@ -122,7 +121,6 @@ function renderTransactions(transactions) {
       }
     });
   });
-  // Show total gain, total loss, and total at the bottom
   const totalDisplay = document.getElementById('total-display');
   let totalClass = '';
   if (total > 0) totalClass = 'gain';
@@ -136,11 +134,9 @@ function renderTransactions(transactions) {
       <strong>Total:</strong> <span class="transaction-amount ${totalClass}">₹${total.toFixed(2)}</span>
     </div>
   `;
-  // Scroll to the bottom to show the latest transaction
   list.scrollTop = list.scrollHeight;
 }
 
-// Transaction form submit
 const form = document.getElementById('transaction-form');
 form.addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -168,7 +164,7 @@ form.addEventListener('submit', async function(e) {
   this.reset();
 });
 
-// Auth state change
+// Auth state 
 firebase.auth().onAuthStateChanged(async user => {
   currentUser = user;
   if (user) {
@@ -176,7 +172,6 @@ firebase.auth().onAuthStateChanged(async user => {
   } else {
     renderTransactions();
   }
-  // ... existing avatar logic ...
   if (user) {
     avatarImg.src = user.photoURL || 'https://www.gravatar.com/avatar/?d=mp';
   } else {
@@ -185,7 +180,7 @@ firebase.auth().onAuthStateChanged(async user => {
   hideUserPopup();
 });
 
-// Avatar and popup logic
+// Avatar 
 const avatarBtn = document.getElementById('user-avatar-btn');
 const avatarImg = document.getElementById('user-avatar-img');
 const userPopup = document.getElementById('user-popup');
@@ -234,7 +229,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Payment method options logic
+// Payment method 
 const typeSelect = document.getElementById('type');
 const paymentMethodSelect = document.getElementById('payment-method');
 
@@ -256,5 +251,4 @@ function updatePaymentMethodOptions() {
 }
 
 typeSelect.addEventListener('change', updatePaymentMethodOptions);
-// Initialize on page load
 updatePaymentMethodOptions(); 
